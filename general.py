@@ -83,8 +83,8 @@ def connection(ip_address, username, password):
         authentication = True
         connectivity = True
         con_type = 'SSH'
-    except ConnectionRefusedError or ConnectionRefusedError or ValueError or ssh_exception.NetmikoTimeoutException or \
-            ssh_exception.NetmikoAuthenticationException:
+    except (ConnectionRefusedError, ConnectionRefusedError, ValueError, ssh_exception.NetmikoTimeoutException,
+            ssh_exception.NetmikoAuthenticationException):
         try:
             device['device_type'] = 'cisco_ios_telnet'
             devicetype = 'cisco_ios_telnet'
@@ -133,6 +133,13 @@ def connection(ip_address, username, password):
             session = ''
             devicetype = ''
             exception = 'ValueError'
+        except OSError:
+            authentication = False
+            authorization = False
+            connectivity = False
+            session = ''
+            devicetype = ''
+            exception = 'OSError'
     return {
         'con_type': con_type,
         'connectivity': connectivity,
@@ -143,3 +150,43 @@ def connection(ip_address, username, password):
         'devicetype': devicetype,
         'exception': exception
     }
+
+
+# Outputs AP list to CSV file with columns:
+# 'ap_hostname,ap_mgmt_ip,ap_platform,ap_software,ap_intf,sw_intf,sw_hostname,sw_mgmt_ip'
+def output_to_file(ap_list_full, file):
+    with open(file, 'w+') as file:
+        file.write(
+            'ap_hostname,ap_mgmt_ip,ap_platform,ap_software,ap_intf,sw_intf,sw_hostname,sw_mgmt_ip\n'
+        )
+        for ap in ap_list_full:
+            ap_hostname = ap['ap_hostname']
+            ap_mgmt_ip = ap['ap_mgmt_ip']
+            ap_platform = ap['ap_platform']
+            r_intf = ap['r_intf']
+            l_intf = ap['l_intf']
+            ap_software = ap['ap_software']
+            sw_hostname = ap['sw_hostname']
+            sw_mgmt_ip = ap['sw_mgmt_ip']
+            file.write(
+                f'{ap_hostname},{ap_mgmt_ip},{ap_platform},{ap_software},{r_intf},{l_intf},{sw_hostname},{sw_mgmt_ip}\n'
+            )
+
+
+# Outputs failed device list to CSV file with columns:
+# 'ip_address,connectivity,authentication,authorization,con_type,con_exception'
+def output_failed_to_file(failed_list, file):
+    with open(file, 'w+') as file:
+        file.write(
+            'ip_address,connectivity,authentication,authorization,con_type,con_exception\n'
+        )
+        for device in failed_list:
+            ip_address = device['ip_address']
+            connectivity = device['connectivity']
+            authentication = device['authentication']
+            authorization = device['authorization']
+            con_type = device['con_type']
+            exception = device['exception']
+            file.write(
+                f'{ip_address},{connectivity},{authentication},{authorization},{con_type},{exception}\n'
+            )
