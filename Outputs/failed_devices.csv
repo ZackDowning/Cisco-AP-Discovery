@@ -1,10 +1,7 @@
 ip_address,connectivity,authentication,authorization,con_type,con_exception
-10.187.155.38,True,True,True,SSH,NULL
-10.187.155.42,True,True,True,SSH,NULL
-10.187.155.52,True,True,True,SSH,NULL
-172.27.3.235,False,False,False,NULL,FunctionTimedOut
-172.27.3.200,False,False,False,NULL,FunctionTimedOut
-10.187.155.56,False,False,False,NULL,FunctionTimedOut
 172.27.3.236,False,False,False,NULL,FunctionTimedOut
+10.187.155.56,False,False,False,NULL,FunctionTimedOut
 172.27.3.215,False,False,False,NULL,FunctionTimedOut
 172.27.3.211,False,False,False,NULL,FunctionTimedOut
+172.27.3.235,False,False,False,NULL,FunctionTimedOut
+172.27.3.200,False,False,False,NULL,FunctionTimedOut

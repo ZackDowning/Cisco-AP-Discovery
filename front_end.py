@@ -19,9 +19,9 @@ try:
         'Press Enter once complete\n'
     )
     mgmt_ip_list = mgmt_ip_addresses('Inputs/MGMT.txt')
-    username = input('Enter Network Username: ')
+    username = input('\nEnter Network Username: ')
     password = getpass('Enter Network Password: ')
-    print('Starting Discovery...')
+    print('\nStarting Discovery...\n')
     start = time.perf_counter()
     discovery_dict = discovery(mgmt_ip_list, username, password)
     output_to_file(ap_list_full(discovery_dict['successful']), 'Outputs/ap_discovery.csv')

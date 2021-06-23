@@ -27,7 +27,7 @@ def ap_discovery(session):
                     else:
                         software_version = software_version.replace(' ', '')
             if neighbor['platform'].__contains__('cisco '):
-                platform = neighbor['platform'].replace('cisco ')
+                platform = neighbor['platform'].replace('cisco ', '')
             else:
                 platform = neighbor['platform']
             ap = {
@@ -76,18 +76,31 @@ def discovery(mgmt_ip_addresses, username, password):
 
     def multithread(ip_address):
         try:
-            conn = func_timeout(10, connection, args=(ip_address, username, password))
+            conn = func_timeout(60, connection, args=(ip_address, username, password))
             session = conn['session']
             connectivity = conn['connectivity']
             authentication = conn['authentication']
             authorization = conn['authorization']
             con_type = conn['con_type']
             exception = conn['exception']
+            if connectivity:
+                c = 'Success'
+            else:
+                c = 'Failed'
+            if authentication:
+                ae = 'Success'
+            else:
+                ae = 'Failed'
+            if authorization:
+                ao = 'Success'
+            else:
+                ao = 'Failed'
             if authorization:
                 hostname = conn['hostname']
                 print(f'Device: {ip_address} - {hostname}\n'
                       '      Connectivity: Success\n'
-                      '      Authentication & Authorization: Success\n')
+                      '      Authentication: Success\n'
+                      '      Authorization: Success\n')
                 ap_list = ap_discovery(session)
                 device = {
                     'hostname': hostname,
@@ -100,20 +113,30 @@ def discovery(mgmt_ip_addresses, username, password):
                     'exception': exception
                 }
                 devices['successful'].append(device)
+            else:
+                print(f'Device: {ip_address}\n'
+                      f'      Connectivity: {c}\n'
+                      f'      Authentication: {ae}\n'
+                      f'      Authentication: {ao}\n')
+                device = {
+                    'ip_address': ip_address,
+                    'connectivity': connectivity,
+                    'authentication': authentication,
+                    'authorization': authorization,
+                    'con_type': con_type,
+                    'exception': exception
+                }
+                devices['failed'].append(device)
         except FunctionTimedOut:
             connectivity = False
             authentication = False
             authorization = False
             con_type = 'NULL'
             exception = 'FunctionTimedOut'
-        if any([connectivity, authentication, authorization]) is not True:
-            print(f'Device: {ip_address}')
-            if connectivity is not True:
-                print('      Connectivity: Failed')
-            if authentication is not True:
-                print('      Authentication: Failed')
-            if authorization is not True:
-                print('      Authorization: Failed')
+            print(f'Device: {ip_address}\n'
+                  '      Connectivity: Failed\n'
+                  '      Authentication: Failed\n'
+                  '      Authorization: Failed\n')
             device = {
                 'ip_address': ip_address,
                 'connectivity': connectivity,

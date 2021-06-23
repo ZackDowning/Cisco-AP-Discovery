@@ -1,1 +1,7 @@
 ap_hostname,ap_mgmt_ip,ap_platform,ap_software,ap_intf,sw_intf,sw_hostname,sw_mgmt_ip
+AP-Admin-Hosts,10.187.153.173,AIR-CAP3702E-B-K9,15.3(3)JC15,GigabitEthernet0,GigabitEthernet9/21,Admin-DC-Dist1,10.187.155.1
+AP002c.c8bc.9078.sps.nucorsteel.local,10.187.153.236,AIR-CAP3702E-B-K9,15.3(3)JC15,GigabitEthernet0,GigabitEthernet9/19,Admin-DC-Dist1,10.187.155.1
+ap-hm-admin-sales,10.187.153.151,AIR-CAP3502E-A-K9,15.3(3)JC15,GigabitEthernet0,GigabitEthernet9/23,Admin-DC-Dist1,10.187.155.1
+AP-Admin-DataCenter,10.187.153.177,AIR-CAP3702E-B-K9,15.3(3)JC15,GigabitEthernet0,GigabitEthernet9/17,Admin-DC-Dist1,10.187.155.1
+AP-IT-Trailer.sps.nucorsteel.local,10.187.153.87,AIR-CAP3702E-B-K9,15.3(3)JC15,GigabitEthernet0,GigabitEthernet3/0/48,Admin-ITBuilding-AC-STK,10.187.155.75
+AP-ENGTRL.nsdecatur.local,10.187.160.236,AIR-CAP3502E-A-K9,15.3(3)JC15,GigabitEthernet0,GigabitEthernet0/29,ADMIN-ENGTRL-AC2,10.187.155.53
