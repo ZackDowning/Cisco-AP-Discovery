@@ -1,0 +1,9 @@
+ip_address,connectivity,authentication,authorization,con_type,con_exception
+10.39.16.1,False,False,False,NULL,FunctionTimedOut
+10.39.16.3,False,False,False,NULL,FunctionTimedOut
+10.39.16.2,False,False,False,NULL,FunctionTimedOut
+10.39.16.8,False,False,False,NULL,FunctionTimedOut
+10.39.16.7,False,False,False,NULL,FunctionTimedOut
+10.39.16.4,False,False,False,NULL,FunctionTimedOut
+10.39.16.5,False,False,False,NULL,FunctionTimedOut
+10.39.16.6,False,False,False,NULL,FunctionTimedOut

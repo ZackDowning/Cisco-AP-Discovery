@@ -4,7 +4,7 @@ from netmiko import SSHDetect
 from address_validator import ipv4
 import os
 
-os.environ['NET_TEXTFSM'] = './working-files/templates'
+os.environ['NET_TEXTFSM'] = './Inputs/working-files/templates'
 
 
 # Checks and waits for validity of individual IP address in MGMT.txt file and returns list of IP addresses once valid
