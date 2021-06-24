@@ -73,10 +73,12 @@ def discovery(mgmt_ip_addresses, username, password):
         'successful': [],
         'failed': []
     }
+    timeout = 15
 
     def multithread(ip_address):
         try:
-            conn = func_timeout(60, connection, args=(ip_address, username, password))
+            conn = func_timeout(timeout, connection, args=(ip_address, username, password))
+            # conn = connection(ip_address, username, password)
             session = conn['session']
             connectivity = conn['connectivity']
             authentication = conn['authentication']
@@ -117,7 +119,7 @@ def discovery(mgmt_ip_addresses, username, password):
                 print(f'Device: {ip_address}\n'
                       f'      Connectivity: {c}\n'
                       f'      Authentication: {ae}\n'
-                      f'      Authentication: {ao}\n')
+                      f'      Authorization: {ao}\n')
                 device = {
                     'ip_address': ip_address,
                     'connectivity': connectivity,
@@ -149,7 +151,7 @@ def discovery(mgmt_ip_addresses, username, password):
 
     executor = concurrent.futures.ThreadPoolExecutor(len(mgmt_ip_addresses))
     futures = [executor.submit(multithread, address) for address in mgmt_ip_addresses]
-    concurrent.futures.wait(futures)
+    concurrent.futures.wait(futures, timeout=float(len(mgmt_ip_addresses)*timeout))
     return devices
 
 
