@@ -1,5 +1,5 @@
 from general import connection
-from func_timeout import (func_timeout, FunctionTimedOut)
+# from func_timeout import (func_timeout, FunctionTimedOut)
 import concurrent.futures
 
 
@@ -73,72 +73,30 @@ def discovery(mgmt_ip_addresses, username, password):
         'successful': [],
         'failed': []
     }
-    timeout = 15
 
     def multithread(ip_address):
-        try:
-            conn = func_timeout(timeout, connection, args=(ip_address, username, password))
-            # conn = connection(ip_address, username, password)
-            session = conn['session']
-            connectivity = conn['connectivity']
-            authentication = conn['authentication']
-            authorization = conn['authorization']
-            con_type = conn['con_type']
-            exception = conn['exception']
-            if connectivity:
-                c = 'Success'
-            else:
-                c = 'Failed'
-            if authentication:
-                ae = 'Success'
-            else:
-                ae = 'Failed'
-            if authorization:
-                ao = 'Success'
-            else:
-                ao = 'Failed'
-            if authorization:
-                hostname = conn['hostname']
-                print(f'Device: {ip_address} - {hostname}\n'
-                      '      Connectivity: Success\n'
-                      '      Authentication: Success\n'
-                      '      Authorization: Success\n')
-                ap_list = ap_discovery(session)
-                device = {
-                    'hostname': hostname,
-                    'ip_address': ip_address,
-                    'connectivity': connectivity,
-                    'authentication': authentication,
-                    'authorization': authorization,
-                    'con_type': con_type,
-                    'aps': ap_list,
-                    'exception': exception
-                }
-                devices['successful'].append(device)
-            else:
-                print(f'Device: {ip_address}\n'
-                      f'      Connectivity: {c}\n'
-                      f'      Authentication: {ae}\n'
-                      f'      Authorization: {ao}\n')
-                device = {
-                    'ip_address': ip_address,
-                    'connectivity': connectivity,
-                    'authentication': authentication,
-                    'authorization': authorization,
-                    'con_type': con_type,
-                    'exception': exception
-                }
-                devices['failed'].append(device)
-        except FunctionTimedOut:
-            connectivity = False
-            authentication = False
-            authorization = False
-            con_type = 'NULL'
-            exception = 'FunctionTimedOut'
-            print(f'Device: {ip_address}\n'
-                  '      Connectivity: Failed\n'
-                  '      Authentication: Failed\n'
-                  '      Authorization: Failed\n')
+        conn = connection(ip_address, username, password)
+        session = conn['session']
+        connectivity = conn['connectivity']
+        authentication = conn['authentication']
+        authorization = conn['authorization']
+        con_type = conn['con_type']
+        exception = conn['exception']
+        if authorization:
+            hostname = conn['hostname']
+            ap_list = ap_discovery(session)
+            device = {
+                'hostname': hostname,
+                'ip_address': ip_address,
+                'connectivity': connectivity,
+                'authentication': authentication,
+                'authorization': authorization,
+                'con_type': con_type,
+                'aps': ap_list,
+                'exception': exception
+            }
+            devices['successful'].append(device)
+        else:
             device = {
                 'ip_address': ip_address,
                 'connectivity': connectivity,
@@ -149,9 +107,38 @@ def discovery(mgmt_ip_addresses, username, password):
             }
             devices['failed'].append(device)
 
-    executor = concurrent.futures.ThreadPoolExecutor(len(mgmt_ip_addresses))
-    futures = [executor.submit(multithread, address) for address in mgmt_ip_addresses]
-    concurrent.futures.wait(futures, timeout=float(len(mgmt_ip_addresses)*timeout))
+    # This accounts for bug in Windows pyinstaller Application
+    bug = True
+    bug_msg = 0
+    while bug:
+        devices = {
+            'successful': [],
+            'failed': []
+        }
+        executor = concurrent.futures.ThreadPoolExecutor(50)
+        futures = [executor.submit(multithread, address) for address in mgmt_ip_addresses]
+        concurrent.futures.wait(futures, timeout=None)
+        successful = len(devices['successful'])
+        failed = len(devices['failed'])
+        if (successful + failed) != len(mgmt_ip_addresses):
+            if bug_msg == 0:
+                print('Taking longer than expected due to Windows OS bug...\n')
+            else:
+                print('Working...')
+            bug_msg += 1
+            bug = True
+        else:
+            if successful != 0:
+                print('\nSuccessful devices:')
+                for device_s in devices['successful']:
+                    print(f"{device_s['ip_address']}: {device_s['hostname']}")
+            if failed != 0:
+                print('\nFailed devices:')
+                for device_f in devices['failed']:
+                    print(f"{device_f['ip_address']}")
+                print('\nSee "failed_devices.csv" in "Outputs" folder for failed connection details.\n')
+            bug = False
+
     return devices
 
 
